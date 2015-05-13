@@ -61,7 +61,7 @@ assert(cmds.isflagp(), 1);
 console.log("SUB");
 cmds.set(3);
 cmds.SUB(1);
-assert(cmds.get(), 2); //vrs[0] = 0; vrs[1] = 1;
+assert(cmds.get(), 2); //vrs[0] = 0; vrs[1] = 1; vrs[3] = 0;
 assert(cmds.isflagp(), 1); 
 assert(cmds.isflagz(), 0); 
 
@@ -76,4 +76,24 @@ cmds.set(0);
 cmds.SUB(1);
 assert(cmds.get(), 0); 
 assert(cmds.isflagz(), 0); 
+assert(cmds.isflagp(), 0); 
+
+
+console.log("STA (NB!! change vrs array)");
+cmds.set(10);
+cmds.STA(0);
+assert(vrs[0], 10); 
+
+console.log("LDA (NB!! change vrs array)");
+cmds.set(0);
+vrs[0] = 10;
+cmds.LDA(0); 
+assert(cmds.get(), 10); 
+assert(cmds.isflagz(), 0); 
+assert(cmds.isflagp(), 1); 
+
+vrs[0] = 0;
+cmds.LDA(0);
+assert(cmds.get(), 0); 
+assert(cmds.isflagz(), 1); 
 assert(cmds.isflagp(), 0); 
