@@ -1,4 +1,3 @@
-
 /*
 
 var cmd = {
@@ -15,57 +14,51 @@ var cmd = {
 	}
 */
 
-var npt = "HLT";
-var number = 5;
 
-
-var vrs = {0, 1, 5, 7}
-var cmds = function() {
+var cmds = (function() {
 	var acm = 0;
 	var cnt = 0;
 	var flgz = 0;
 	var flgp = 0;
 
-	return{ //ToDo: get - set
+	return{ 
 		get: function(){
 			return this.acm;
 		},
-
-		INP: function(arg){
-			if (arg < 0 || arg > 999) return "error: invalid number"
-			if (!arg) {
-				this.setflagz(1);
-			} else {
-				this.setflagp(1);
-			}
+		set: function(arg){
 			this.acm = arg;
-
-		}, 	
-
+		},
+		getc: function(){
+			return this.cnt;
+		},
+		setc: function(arg){
+			this.cnt = arg;
+		},
 		isflag: function(flg){
 			return this[flg];
 		},
 
 		ADD: function(arg){
 			var tmp = vrs[arg] + this.get();
-			this.INP(tmp);
+			this.set(tmp);
 			if (!tmp) {
 				this.setflagz(1);
-			} else if (tmp > 0 && tmp < 999){
+			} else if (tmp > 0 && tmp <= 999){
 				this.setflagp(1);
 			} else {
-				return "error: out of range";
+				console.log("error: out of range");
+				return false;
 			}
 		},
 
 		SUB: function(arg){
-			var tmp = vrs[arg] - this.get();
+			var tmp = this.get() - vrs[arg];
 			if (!tmp) {
 				this.setflagz(1);
-				this.INP(tmp);
+				this.set(tmp);
 			} else if (tmp > 0) {
 				this.setflagp(1);
-				this.INP(tmp);
+				this.set(tmp);
 			} else if (tmp < 0) {
 				this.setflagp(0);
 				this.setflagz(0);
@@ -78,7 +71,7 @@ var cmds = function() {
 
 		LDA: function(arg){
 			var tmp = vrs[arg];
-			this.INP(tmp);
+			this.set(tmp);
 			if (!tmp) {
 				this.setflagz(1);
 			} else if (tmp > 0){
@@ -87,24 +80,39 @@ var cmds = function() {
 		}, 
 
 		BRA: function(arg){
-			this.cnt = arg;
+			this.setc(arg); 
 		},
 
 		BRZ: function(arg){
-			if (this.isflag(flgz)) this.cnt = arg;
+			if (this.isflag(flgz)) this.setc(arg);
 
 		},	
 
 		BRP: function(arg){
-			if (this.isflag(flgz) || this.isflag(flgp)) this.cnt = arg;
+			if (this.isflag(flgz) || this.isflag(flgp)) this.setc(arg);
 		},
 
-		OUT: function(){
+		INP: function(arg){ //ToDo: Выбрать число из окошка INP 
+			if (arg < 0 || arg > 999){
+				console.log("error: invalid number");
+				return 0;
+			}  
+			if (!arg) {
+				this.setflagz(1);
+			} else {
+				this.setflagp(1);
+			}
+			this.set(arg);
+
+		}, 	
+		OUT: function(){ //ToDo: в OUT.
 			console.log(this.get());
 		},
 
 		HLT: function(){
-			return "exit";
+			console.log("work done");
+			return 1;
 		}
 	}
-};
+}());
+
