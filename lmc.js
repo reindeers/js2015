@@ -1,5 +1,4 @@
 /*
-
 var cmd = {
 			1: "ADD", 
 			2: "SUB", 
@@ -15,6 +14,7 @@ var cmd = {
 */
 
 
+var vrs = [0, 1, 5, 7];
 var cmds = (function() {
 	var acm = 0;
 	var cnt = 0;
@@ -22,7 +22,7 @@ var cmds = (function() {
 	var flgp = 0;
 
 	return{ 
-		get: function(){
+		get: function(){ //ToDo: private
 			return this.acm;
 		},
 		set: function(arg){
@@ -34,34 +34,49 @@ var cmds = (function() {
 		setc: function(arg){
 			this.cnt = arg;
 		},
-		isflag: function(flg){
-			return this[flg];
+		isflagp: function(){
+			return this.flgp;
+		},
+		isflagz: function(){
+			return this.flgz;
+		},
+		setflagz: function(){
+			this.flgz = 1;
+			this.flgp = 0;
+		},
+		setflagp: function(){
+			this.flgp = 1;
+			this.flgz = 0;
+		},
+		setflag_none: function(){
+			this.flgp = 0;
+			this.flgz = 0;
 		},
 
 		ADD: function(arg){
 			var tmp = vrs[arg] + this.get();
 			this.set(tmp);
 			if (!tmp) {
-				this.setflagz(1);
-			} else if (tmp > 0 && tmp <= 999){
-				this.setflagp(1);
+				this.setflagz();
 			} else {
+				this.setflagp();
+			};
+			if (tmp < 0 || tmp > 999) {
 				console.log("error: out of range");
 				return false;
-			}
+			};
 		},
 
 		SUB: function(arg){
 			var tmp = this.get() - vrs[arg];
 			if (!tmp) {
-				this.setflagz(1);
+				this.setflagz();
 				this.set(tmp);
 			} else if (tmp > 0) {
-				this.setflagp(1);
+				this.setflagp();
 				this.set(tmp);
 			} else if (tmp < 0) {
-				this.setflagp(0);
-				this.setflagz(0);
+				this.setflag_none();
 			}
 		},	
 
@@ -73,9 +88,9 @@ var cmds = (function() {
 			var tmp = vrs[arg];
 			this.set(tmp);
 			if (!tmp) {
-				this.setflagz(1);
+				this.setflagz();
 			} else if (tmp > 0){
-				this.setflagp(1);
+				this.setflagp();
 			}		
 		}, 
 
@@ -84,12 +99,12 @@ var cmds = (function() {
 		},
 
 		BRZ: function(arg){
-			if (this.isflag(flgz)) this.setc(arg);
+			if (this.isflagz) this.setc(arg);
 
 		},	
 
 		BRP: function(arg){
-			if (this.isflag(flgz) || this.isflag(flgp)) this.setc(arg);
+			if (this.isflagz || this.isflagp) this.setc(arg);
 		},
 
 		INP: function(arg){ //ToDo: Выбрать число из окошка INP 
@@ -98,9 +113,9 @@ var cmds = (function() {
 				return 0;
 			}  
 			if (!arg) {
-				this.setflagz(1);
+				this.setflagz();
 			} else {
-				this.setflagp(1);
+				this.setflagp();
 			}
 			this.set(arg);
 
