@@ -97,3 +97,47 @@ cmds.LDA(0);
 assert(cmds.get(), 0); 
 assert(cmds.isflagz(), 1); 
 assert(cmds.isflagp(), 0); 
+
+console.log("BRA");
+cmds.BRA(5);
+assert(cmds.getc(), 5); 
+
+console.log("BRZ");
+cmds.setflagz()
+cmds.BRZ(6)
+assert(cmds.getc(), 6); 
+
+cmds.setflagp()
+cmds.BRZ(5);
+assert(cmds.getc(), 5); 
+
+console.log("BRP");
+cmds.setflagz()
+cmds.BRZ(6)
+assert(cmds.getc(), 6); 
+
+cmds.setflagp()
+cmds.BRZ(5);
+assert(cmds.getc(), 5); 
+
+cmds.setflag_none()
+cmds.BRZ(6);
+assert(cmds.getc(), 6); 
+
+console.log("INP");
+cmds.INP(1);
+assert(cmds.get(), 1); 
+assert(cmds.isflagp(), 1); 
+
+cmds.INP(0);
+assert(cmds.get(), 0); 
+assert(cmds.isflagz(), 1); 
+
+assert(cmds.INP(1000), 0); 
+
+console.log("OUT");
+cmds.set(10);
+cmds.OUT();
+
+console.log("HLT");
+assert(cmds.HLT(), 1); 
