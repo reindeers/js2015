@@ -1,4 +1,3 @@
-/*
 var cmd = {
 			1: "ADD", 
 			2: "SUB", 
@@ -10,11 +9,28 @@ var cmd = {
 			901: "INP", 
 			902: "OUT", 
 			000: "HLT" 
+	};
+
+var obca = [];
+
+var incmd = function(c) {
+	if (c==901 || c==902 || c==000){
+		/*console.log(cmd[c]);*/
+		obca.push([c, 0]);
+	} else {
+		obca.push([
+			cmd[c.toString()[0]], 
+			c.toString()[1]+c.toString()[2]
+		]);
+		/*console.log(cmd[c.toString()[0]]);
+		console.log(c.toString()[1]+c.toString()[2]);*/
 	}
-*/
+};
 
+incmd(101);
+incmd(901);
 
-var vrs = [0, 1, 5, 7];
+var vrs = [0, 1, 0, 7];
 var cmds = (function() {
 	var acm = 0;
 	var cnt = 0;
@@ -131,3 +147,21 @@ var cmds = (function() {
 	}
 }());
 
+var emulator = (function(){
+	return {
+	LOAD: function(args){
+
+	},
+
+	RUN: function(){
+		for (var i =0; i < obca.length; i++) {
+		 	cmds.ADD(10);
+		 }; 
+	}
+}
+}());
+
+cmds.ADD(10);
+console.log(cmds.get());
+emulator.RUN();
+console.log(cmds.get());
