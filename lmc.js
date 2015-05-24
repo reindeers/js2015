@@ -15,29 +15,34 @@ var obca = [];
 
 var incmd = function(c) {
 	if (c==901 || c==902 || c==000){
-		/*console.log(cmd[c]);*/
-		obca.push([c, 0]);
+		obca.push([cmd[c], 0]);
+	} else if (c.toString()[1] ==0) {
+		obca.push([
+			cmd[c.toString()[0]], 
+			c.toString()[2]
+		]);
+
 	} else {
 		obca.push([
 			cmd[c.toString()[0]], 
 			c.toString()[1]+c.toString()[2]
 		]);
-		/*console.log(cmd[c.toString()[0]]);
-		console.log(c.toString()[1]+c.toString()[2]);*/
 	}
 };
 
-incmd(101);
-incmd(901);
 
-var vrs = [0, 1, 0, 7];
+var vrs = [];
+for (i=0; i < 100; i++){
+	vrs[i] = i;
+}
+
 var cmds = (function() {
 	var acm = 0;
 	var cnt = 0;
 	var flgz = 0;
 	var flgp = 0;
-
 	return{ 
+
 		get: function(){ //ToDo: private
 			return this.acm;
 		},
@@ -116,24 +121,24 @@ var cmds = (function() {
 
 		BRZ: function(arg){
 			if (this.isflagz) this.setc(arg);
-
 		},	
 
 		BRP: function(arg){
 			if (this.isflagz || this.isflagp) this.setc(arg);
 		},
 
-		INP: function(arg){ //ToDo: Выбрать число из окошка INP 
-			if (arg < 0 || arg > 999){
+		INP: function(){
+			var nmbr = emulator.INPGET();
+			if (nmbr < 0 || nmbr > 999){
 				console.log("error: invalid number");
 				return 0;
 			}  
-			if (!arg) {
+			if (!nmbr) {
 				this.setflagz();
 			} else {
 				this.setflagp();
 			}
-			this.set(arg);
+			this.set(nmbr);
 
 		}, 	
 		OUT: function(){ //ToDo: в OUT.
@@ -148,20 +153,34 @@ var cmds = (function() {
 }());
 
 var emulator = (function(){
+	var inpnmbr = 0;
 	return {
+	INPSET: function(arg){
+		this.inpnmbr = arg;
+	},
+	INPGET: function(arg){
+		return(this.inpnmbr);
+	},
 	LOAD: function(args){
+		var tmpar = inputprogram.split(' ');
+		for (var i=0; i < tmpar.length; i++) incmd(+tmpar[i]);
+	},
 
+	DUMP: function(){
+		console.log(obca.toString()); //ToDo obca.toString()
 	},
 
 	RUN: function(){
 		for (var i =0; i < obca.length; i++) {
-		 	cmds.ADD(10);
+		 		cmds[obca[i][0]](obca[i][1]);
+
 		 }; 
 	}
 }
 }());
 
-cmds.ADD(10);
-console.log(cmds.get());
+var inputprogram = '901 902 704 600 000';
+emulator.INPSET(5);
+emulator.LOAD();
+emulator.DUMP();
 emulator.RUN();
-console.log(cmds.get());
